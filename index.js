@@ -7,6 +7,7 @@ dotenv.config({
   path: "./.env",
 });
 
+
 await connectDB();
 
 const app = express();
