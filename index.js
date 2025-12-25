@@ -12,6 +12,8 @@ await connectDB();
 
 const app = express();
 
+app.use(express.json());
+
 //using routes
 app.use("/api/v1", userRoutes);
 
