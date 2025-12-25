@@ -1,17 +1,22 @@
 import { createTransport } from "nodemailer";
 
 const sendMail = async ({ email, subject, html }) => {
+
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+    throw new Error("SMTP_USER and SMTP_PASSWORD must be set in environment variables");
+  }
+
   const transport = createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    host: "smtp.gmail.com",
+    port: 465,
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      pass: process.env.SMTP_PASSWORD,
     },
   });
 
   await transport.sendMail({
-    from: process.env.SMTP_FROM,
+    from: process.env.SMTP_USER,
     to: email,
     subject,
     html,
