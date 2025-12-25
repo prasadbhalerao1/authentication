@@ -1,6 +1,7 @@
 import tryCatch from "../middleware/tryCatch.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema } from "../config/zod.js";
+import redisClient from "../index.js";
 
 export const registerUser = tryCatch(async (req, res) => {
   const sanitizedBody = sanitize(req.body);
@@ -31,6 +32,12 @@ export const registerUser = tryCatch(async (req, res) => {
   }
 
   const { name, email, password } = validation.data;
+
+  // Rate Limit
+  const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
+  if(await redisClient.get(rateLimitKey)) {
+    return res.status(429).json({ message: "Too many requests, try again later..." });
+  }
 
   res.json({ name, email, password });
 });

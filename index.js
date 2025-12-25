@@ -3,10 +3,32 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
+import { createClient } from "redis";
 
 dotenv.config({
   path: "./.env",
 });
+
+await connectDB();
+
+const redisURL = process.env.REDIS_URL;
+if (!redisURL) {
+  console.log("REDIS_URL is not defined");
+  process.exit(1);
+}
+
+const redisClient = createClient({
+  url: redisURL,
+});
+
+export default redisClient;
+
+redisClient
+  .connect()
+  .then(() => console.log("Redis client connected"))
+  .catch((err) => console.log("Error connecting to Redis client ", err));
+
+const app = express();
 
 app.use(
   cors({
@@ -16,10 +38,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
-await connectDB();
-
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
