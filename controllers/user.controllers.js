@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import sendMail from "../config/sendMail.js";
 import { getOtpHtml, getVerifyEmailHtml } from "../config/html.js";
+import { json } from "zod";
 
 export const registerUser = tryCatch(async (req, res) => {
   const sanitizedBody = sanitize(req.body);
@@ -145,5 +146,66 @@ export const loginUser = tryCatch(async (req, res) => {
   }
 
   const { email, password } = validation.data;
+
+  const rateLimitKey = `login-rate-limit:${req.ip}:${email}`;
+
+  if (await redisClient.get(rateLimitKey)) {
+    return res
+      .status(429)
+      .json({ message: "Too many requests, try again later..." });
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({ message: "User does not exist" });
+  }
+
+  const camparePassword = await bcrypt.compare(password, user.password);
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  const otpKey = `otp:${email}`;
+
+  await redisClient.set(otpKey, JSON.stringify(otp), { EX: 300 });
+
+  const subject = "Verify your email address";
+  const html = getOtpHtml({ email, otp });
+
+  await sendMail({ email, subject, html });
+
+  await redisClient.set(rateLimitKey, "true ", { EX: 60 });
+
+  res.json({
+    message: "If email is valid, OTP is sent. It will expire in 5 minutes",
+  });
+});
+
+export const verifyOtp = tryCatch(async (req, res) => {
+
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ message: "Email and OTP are required" });
+  }
+
+  const otpKey = `otp:${email}`;
+
+  const storedOtp = await redisClient.get(otpKey);
+
+  if (!storedOtp) {
+    return res.status(400).json({ message: "OTP has expired" });
+  }
+
+  const parsedOtp = JSON.parse(storedOtp);
+
+  if (parsedOtp !== otp) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+  await redisClient.del(otpKey);
+
+  let user = await User.findOne({ email });
+
   
 });
