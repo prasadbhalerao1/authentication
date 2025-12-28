@@ -1,6 +1,6 @@
 import tryCatch from "../middleware/tryCatch.js";
 import sanitize from "mongo-sanitize";
-import { registerSchema } from "../config/zod.js";
+import { registerSchema, loginSchema } from "../config/zod.js";
 import redisClient from "../index.js";
 import { User } from "../models/users.models.js";
 import bcrypt from "bcrypt";
@@ -40,6 +40,7 @@ export const registerUser = tryCatch(async (req, res) => {
 
   // Rate Limit
   const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
+
   if (await redisClient.get(rateLimitKey)) {
     return res
       .status(429)
@@ -52,18 +53,18 @@ export const registerUser = tryCatch(async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  
+
   const verifyToken = crypto.randomBytes(32).toString("hex");
 
   const verifyKey = `verify:${verifyToken}`;
 
-  const dataToStore= JSON.stringify({
+  const dataToStore = JSON.stringify({
     name,
     email,
-    password:hashedPassword,
+    password: hashedPassword,
   });
 
-  await redisClient.set(verifyKey, dataToStore, {EX: 300});
+  await redisClient.set(verifyKey, dataToStore, { EX: 300 });
 
   const subject = "Verify your email address";
   const html = getVerifyEmailHtml({ email, token: verifyToken });
@@ -72,7 +73,77 @@ export const registerUser = tryCatch(async (req, res) => {
 
   await redisClient.set(rateLimitKey, "true ", { EX: 60 });
 
-  res.json({ 
-    message:"If your email is valid, a verfication link has been sent. It will expire in 5 minutes",
-   });
+  res.json({
+    message:
+      "If your email is valid, a verfication link has been sent. It will expire in 5 minutes",
+  });
+});
+
+export const verifyUser = tryCatch(async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    return res.status(400).json({ message: "Token is required" });
+  }
+
+  const verifyKey = `verify:${token}`;
+
+  const userDataJson = await redisClient.get(verifyKey);
+
+  if (!userDataJson) {
+    return res.status(400).json({ message: "Invalid token" });
+  }
+
+  await redisClient.del(verifyKey);
+
+  const userData = JSON.parse(userDataJson);
+  console.log(userData);
+
+  const existingUser = await User.findOne({ email: userData.email });
+  if (existingUser) {
+    return res.status(400).json({ message: "User already exists" });
+  }
+
+  const newUser = await User.create({
+    name: userData.name,
+    email: userData.email,
+    password: userData.password,
+  });
+
+  res.status(201).json({
+    message: "User created successfully",
+    user: { _id: newUser._id, email: newUser.email, name: newUser.name },
+  });
+});
+
+export const loginUser = tryCatch(async (req, res) => {
+  const sanitizedBody = sanitize(req.body);
+
+  if (sanitizedBody.email) {
+    sanitizedBody.email = String(sanitizedBody.email).trim().toLowerCase();
+  }
+
+  const validation = loginSchema.safeParse(sanitizedBody);
+
+  if (!validation.success) {
+    const zodError = validation.error;
+    let firstError = "Validation failed";
+    let allErrors = [];
+
+    if (zodError?.issues && Array.isArray(zodError.issues)) {
+      allErrors = zodError.issues.map((issue) => ({
+        field: issue.path ? issue.path.join(".") : "unkown",
+        message: issue.message || "validation failed",
+        code: issue.code,
+      }));
+      firstError = allErrors[0]?.message || "Validation failed";
+    }
+
+    return res
+      .status(400)
+      .json({ message: "Validation failed", error: allErrors });
+  }
+
+  const { email, password } = validation.data;
+  
 });
