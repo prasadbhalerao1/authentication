@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 import { createClient } from "redis";
+import cookieParser from "cookie-parser";
 
 dotenv.config({
   path: "./.env",
@@ -41,6 +42,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //using routes
 app.use("/api/v1", userRoutes);
