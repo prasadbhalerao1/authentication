@@ -5,6 +5,8 @@ import {
   loginUser,
   verifyOtp,
   myProfile,
+  refreshToken,
+  logoutUser,
 } from "../controllers/user.controllers.js";
 import { isAuth } from "../middleware/isAuth.js";
 
@@ -15,5 +17,7 @@ router.post("/verify/:token", verifyUser);
 router.post("/login", loginUser);
 router.post("/verify", verifyOtp);
 router.get("/me", isAuth, myProfile);
+router.post("/refresh", refreshToken);
+router.post("/logout", isAuth, logoutUser);
 
 export default router;
