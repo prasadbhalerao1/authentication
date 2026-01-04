@@ -9,6 +9,8 @@ import {
   registerUser,
   verifyOtp,
   verifyUser,
+  getAllUsers,
+  deleteUser,
 } from "../controllers/user.controllers.js";
 import { authorizedAdmin, isAuth } from "../middleware/isAuth.js";
 import { verifyCSRFToken } from "../config/csrfMiddleware.js";
@@ -24,5 +26,7 @@ router.post("/refresh", refreshToken);
 router.post("/logout", isAuth, verifyCSRFToken, logoutUser);
 router.post("/refresh-csrf", isAuth, refreshCSRF);
 router.get("/admin", isAuth, authorizedAdmin, adminController);
+router.get("/admin/users", isAuth, authorizedAdmin, getAllUsers);
+router.delete("/admin/users/:id", isAuth, authorizedAdmin, deleteUser);
 
 export default router;

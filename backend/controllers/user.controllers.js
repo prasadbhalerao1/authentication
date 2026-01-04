@@ -283,3 +283,31 @@ export const adminController = tryCatch(async (req, res) => {
     message: "Hello admin",
   });
 });
+export const getAllUsers = tryCatch(async (req, res) => {
+  const users = await User.find().select("-password").sort({ createdAt: -1 });
+
+  res.status(200).json({
+    message: "All users fetched successfully",
+    users,
+  });
+});
+
+export const deleteUser = tryCatch(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  await User.findByIdAndDelete(id);
+
+  // Clean up Redis sessions
+  await revokeRefreshToken(id);
+  await redisClient.del(`user:${id}`);
+
+  res.status(200).json({
+    message: "User deleted successfully",
+  });
+});

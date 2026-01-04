@@ -65,7 +65,7 @@ const Home = () => {
               <span className="text-sm font-medium text-muted-foreground">
                 Account Role
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 capitalize">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/50 capitalize">
                 {user?.role || "User"}
               </span>
             </div>
@@ -84,10 +84,7 @@ const Home = () => {
         <CardFooter className="flex flex-col space-y-3 pt-2">
           {user && user.role === "admin" && (
             <Link to="/dashboard" className="w-full">
-              <Button
-                variant="default"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 h-10 text-base"
-              >
+              <Button variant="default" className="w-full h-10 text-base">
                 Access Admin Dashboard
               </Button>
             </Link>

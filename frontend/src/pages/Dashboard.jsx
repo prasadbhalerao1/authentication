@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../apiIntercepter";
-import { toast } from "sonner"; // Used sonner to match other pages
+import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,30 +10,74 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { ShieldCheck, ArrowLeft, Users, Activity } from "lucide-react"; // Assuming lucide-react is available or use standard SVGs
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ShieldCheck, ArrowLeft, Users, Activity, Trash2 } from "lucide-react";
 
 const Dashboard = () => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
-  async function fetchAdminData() {
+  const fetchAdminData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/api/v1/admin`, {
+      // Fetch status message
+      const { data: adminData } = await api.get(`/api/v1/admin`, {
         withCredentials: true,
       });
+      setContent(adminData.message);
 
-      setContent(data.message);
+      // Fetch all users
+      const { data: usersData } = await api.get(`/api/v1/admin/users`, {
+        withCredentials: true,
+      });
+      setUsers(usersData.users);
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to fetch admin data"
       );
-      navigate("/"); // Redirect to home if not admin (handled by backend 401/403 usually)
+      navigate("/");
     } finally {
       setLoading(false);
     }
-  }
+  }, [navigate]);
+
+  const handleDeleteUser = async (userId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this user? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await api.delete(`/api/v1/admin/users/${userId}`, {
+        withCredentials: true,
+      });
+      toast.success("User deleted successfully");
+      // Remove user from local state
+      setUsers(users.filter((user) => user._id !== userId));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete user");
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   useEffect(() => {
     fetchAdminData();
@@ -41,7 +85,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -64,58 +108,115 @@ const Dashboard = () => {
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Status</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                System Status
+              </CardTitle>
               <ShieldCheck className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Active</div>
+              <div className="text-2xl font-bold">Online</div>
               <p className="text-xs text-muted-foreground">
-                System is running normally
+                Verified Connection
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Admin Access
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">Authorized</div>
+              <div className="text-2xl font-bold">{users.length}</div>
               <p className="text-xs text-muted-foreground">
-                You have full permissions
+                Registered Accounts
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                API Response
+                Backend Response
               </CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-lg font-mono truncate">
-                {loading ? "Loading..." : content || "No Data"}
+                {content || "Waiting..."}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Message from Backend
-              </p>
+              <p className="text-xs text-muted-foreground">API Handshake</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content Area */}
-        <Card className="min-h-[300px] flex items-center justify-center border-dashed">
-          <div className="text-center space-y-2">
-            <h3 className="text-lg font-medium">Admin Panel Content</h3>
-            <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-              This is a protected route. Only users with the role{" "}
-              <code>'admin'</code> can view this page. The backend successfully
-              verified your permissions.
-            </p>
-          </div>
+        {/* User Management Section */}
+        <Card className="border-border">
+          <CardHeader>
+            <CardTitle>User Management</CardTitle>
+            <CardDescription>
+              View and manage all registered users.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-8 text-muted-foreground">
+                Loading users...
+              </div>
+            ) : (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Joined</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-8">
+                          No users found
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      users.map((user) => (
+                        <TableRow key={user._id}>
+                          <TableCell className="font-medium">
+                            {user.name}
+                          </TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                                user.role === "admin"
+                                  ? "bg-primary/20 text-primary border border-primary/50"
+                                  : "bg-secondary text-secondary-foreground"
+                              }`}
+                            >
+                              {user.role}
+                            </span>
+                          </TableCell>
+                          <TableCell>{formatDate(user.createdAt)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteUser(user._id)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
         </Card>
       </div>
     </div>
