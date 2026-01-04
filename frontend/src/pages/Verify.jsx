@@ -38,8 +38,8 @@ const Verify = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md shadow-lg text-center">
+    <div className="flex items-center justify-center min-h-screen bg-background text-foreground px-4">
+      <Card className="w-full max-w-md shadow-lg border-border text-center">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Email Verification

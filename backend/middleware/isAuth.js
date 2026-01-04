@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { redisClient } from "../index.js";
+import { redisClient } from "../config/redis.js";
 import { User } from "../models/users.models.js";
 import { isSessionActive } from "../config/generateToken.js";
 
@@ -13,7 +13,7 @@ export const isAuth = async (req, res, next) => {
       });
     }
 
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     if (!decodedData) {
       return res.status(400).json({

@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { server } from "../main";
 import api from "../apiIntercepter";
 import { toast } from "react-toastify";
 
@@ -13,7 +12,7 @@ export const AppProvider = ({ children }) => {
   async function fetchUser() {
     setLoading(true);
     try {
-      const { data } = await api.get(`api/v1/me`);
+      const { data } = await api.get(`api/v1/getMe`);
 
       setUser(data.user);
       setIsAuth(true);
@@ -34,7 +33,8 @@ export const AppProvider = ({ children }) => {
       setUser(null);
       navigate("/login");
     } catch (error) {
-      toast.error("Something went wrong");
+      console.log(error); // Log error for debugging
+      toast.error("Logout failed or session expired");
     }
   }
 

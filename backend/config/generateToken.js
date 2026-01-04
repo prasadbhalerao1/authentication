@@ -1,18 +1,27 @@
 import jwt from "jsonwebtoken";
-import { redisClient } from "../index.js";
+import { redisClient } from "./redis.js";
 import { generateCSRFToken, revokeCSRFTOKEN } from "./csrfMiddleware.js";
 import crypto from "crypto";
 
 export const generateToken = async (id, res) => {
   const sessionId = crypto.randomBytes(16).toString("hex");
+  console.log("generateToken: Started for id:", id);
 
-  const accessToken = jwt.sign({ id, sessionId }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
+  const accessToken = jwt.sign(
+    { id, sessionId },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
+    },
+  );
 
-  const refreshToken = jwt.sign({ id, sessionId }, process.env.REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
+  const refreshToken = jwt.sign(
+    { id, sessionId },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
+    },
+  );
 
   const refreshTokenKey = `refresh_token:${id}`;
   const activeSessionKey = `active_session:${id}`;
@@ -21,7 +30,7 @@ export const generateToken = async (id, res) => {
   const existingSession = await redisClient.get(activeSessionKey);
   if (existingSession) {
     await redisClient.del(`session:${existingSession}`);
-    await redisClient.del(refreshToken);
+    await redisClient.del(refreshTokenKey);
   }
 
   const sessionData = {
@@ -54,14 +63,16 @@ export const generateToken = async (id, res) => {
     secure: true,
   });
 
+  console.log("generateToken: Calling generateCSRFToken");
   const csrfToken = await generateCSRFToken(id, res);
+  console.log("generateToken: Finished");
 
   return { accessToken, refreshToken, csrfToken, sessionId };
 };
 
 export const verifyRefreshToken = async (refreshToken) => {
   try {
-    const decode = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
     const storedToken = await redisClient.get(`refresh_token:${decode.id}`);
 
@@ -99,9 +110,13 @@ export const verifyRefreshToken = async (refreshToken) => {
 };
 
 export const generateAccessToken = (id, sessionId, res) => {
-  const accessToken = jwt.sign({ id, sessionId }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
+  const accessToken = jwt.sign(
+    { id, sessionId },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    },
+  );
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,

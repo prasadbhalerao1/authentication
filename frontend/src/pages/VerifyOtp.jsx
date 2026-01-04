@@ -52,8 +52,8 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md shadow-lg">
+    <div className="flex items-center justify-center min-h-screen bg-background text-foreground px-4">
+      <Card className="w-full max-w-md shadow-lg border-border">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
             Two-Step Verification

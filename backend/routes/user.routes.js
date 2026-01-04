@@ -19,7 +19,7 @@ router.post("/register", registerUser);
 router.post("/verify/:token", verifyUser);
 router.post("/login", loginUser);
 router.post("/verify", verifyOtp);
-router.get("/me", isAuth, myProfile);
+router.get("/getMe", isAuth, myProfile);
 router.post("/refresh", refreshToken);
 router.post("/logout", isAuth, verifyCSRFToken, logoutUser);
 router.post("/refresh-csrf", isAuth, refreshCSRF);

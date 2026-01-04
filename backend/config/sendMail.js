@@ -10,12 +10,20 @@ const sendMail = async ({ email, subject, html }) => {
     },
   });
 
-  await transport.sendMail({
-    from: process.env.SMTP_USER,
-    to: email,
-    subject,
-    html,
-  });
+  try {
+    const info = await transport.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject,
+      html,
+    });
+    console.log(
+      `Email sent successfully to ${email}. Message ID: ${info.messageId}`,
+    );
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 export default sendMail;

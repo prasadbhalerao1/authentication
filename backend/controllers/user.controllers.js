@@ -1,7 +1,7 @@
 import tryCatch from "../middleware/tryCatch.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema, loginSchema } from "../config/zod.js";
-import { redisClient } from "../index.js";
+import { redisClient } from "../config/redis.js";
 import { User } from "../models/users.models.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -152,6 +152,7 @@ export const loginUser = tryCatch(async (req, res) => {
   }
 
   const { email, password } = validation.data;
+  console.log("Login attempt for:", email); // Debug log
 
   const rateLimitKey = `login-rate-limit:${req.ip}:${email}`;
 
@@ -162,6 +163,7 @@ export const loginUser = tryCatch(async (req, res) => {
   }
 
   const user = await User.findOne({ email });
+  console.log("User query result:", user); // Debug log
 
   if (!user) {
     return res.status(400).json({ message: "User does not exist" });
@@ -189,6 +191,7 @@ export const loginUser = tryCatch(async (req, res) => {
 
 export const verifyOtp = tryCatch(async (req, res) => {
   const { email, otp } = req.body;
+  console.log("VerifyOtp Request Body:", req.body); // Debug log
 
   if (!email || !otp) {
     return res.status(400).json({ message: "Email and OTP are required" });
@@ -197,6 +200,7 @@ export const verifyOtp = tryCatch(async (req, res) => {
   const otpKey = `otp:${email}`;
 
   const storedOtp = await redisClient.get(otpKey);
+  console.log("Stored OTP in Redis:", storedOtp); // Debug log
 
   if (!storedOtp) {
     return res.status(400).json({ message: "OTP has expired" });
