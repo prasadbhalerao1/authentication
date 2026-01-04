@@ -20,7 +20,7 @@ const schema = new mongoose.Schema(
       default: "user",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const User = mongoose.model("User", schema);

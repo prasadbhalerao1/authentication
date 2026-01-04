@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 
-const connectDB = async () => {
+const connectDb = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB Connected");
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "MERNAuthentication",
+    });
+
+    console.log("MongoDb connected");
   } catch (error) {
-    console.log("Failed to connect to MongoDB ...");
-    console.log(error);
-    process.exit(1);
+    console.log("Failed to connect");
   }
 };
 
-export default connectDB;
+export default connectDb;

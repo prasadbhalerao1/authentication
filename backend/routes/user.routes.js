@@ -1,14 +1,17 @@
 import express from "express";
 import {
-  registerUser,
-  verifyUser,
+  adminController,
   loginUser,
-  verifyOtp,
+  logutUser,
   myProfile,
+  refreshCSRF,
   refreshToken,
-  logoutUser,
-} from "../controllers/user.controllers.js";
-import { isAuth } from "../middleware/isAuth.js";
+  registerUser,
+  verifyOtp,
+  verifyUser,
+} from "../controllers/user.js";
+import { authorizedAdmin, isAuth } from "../middlewares/isAuth.js";
+import { verifyCSRFToken } from "../config/csrfMiddleware.js";
 
 const router = express.Router();
 
@@ -18,6 +21,9 @@ router.post("/login", loginUser);
 router.post("/verify", verifyOtp);
 router.get("/me", isAuth, myProfile);
 router.post("/refresh", refreshToken);
-router.post("/logout", isAuth, logoutUser);
+router.post("/logout", isAuth, verifyCSRFToken, logutUser);
+router.post("/refresh-csrf", isAuth, refreshCSRF);
+router.get("/admin", isAuth, authorizedAdmin, adminController);
 
 export default router;
+

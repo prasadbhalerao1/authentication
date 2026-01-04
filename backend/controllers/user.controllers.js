@@ -13,6 +13,7 @@ import {
   generateAccessToken,
   revokeRefreshToken,
 } from "../config/generateToken.js";
+import { generateCSRFToken } from "../config/csrfMiddleware.js";
 
 export const registerUser = tryCatch(async (req, res) => {
   const sanitizedBody = sanitize(req.body);
@@ -259,5 +260,22 @@ export const logoutUser = tryCatch(async (req, res) => {
 
   res.status(200).json({
     message: "Logout successful",
+  });
+});
+
+export const refreshCSRF = tryCatch(async (req, res) => {
+  const userId = req.user._id;
+
+  const newCSRFToken = await generateCSRFToken(userId, res);
+
+  res.json({
+    message: "CSRF token refreshed successfully",
+    csrfToken: newCSRFToken,
+  });
+});
+
+export const adminController = tryCatch(async (req, res) => {
+  res.json({
+    message: "Hello admin",
   });
 });
