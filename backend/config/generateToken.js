@@ -35,7 +35,7 @@ export const generateToken = async (id, res) => {
   await redisClient.setEx(
     sessionDataKey,
     7 * 24 * 60 * 60,
-    JSON.stringify(sessionData)
+    JSON.stringify(sessionData),
   );
 
   await redisClient.setEx(activeSessionKey, 7 * 24 * 60 * 60, sessionId);
@@ -70,7 +70,7 @@ export const verifyRefreshToken = async (refreshToken) => {
     }
 
     const activeSessionId = await redisClient.get(
-      `active_session:${decode.id}`
+      `active_session:${decode.id}`,
     );
 
     if (activeSessionId !== decode.sessionId) {
@@ -89,7 +89,7 @@ export const verifyRefreshToken = async (refreshToken) => {
     await redisClient.setEx(
       `session:${decode.sessionId}`,
       7 * 24 * 60 * 60,
-      JSON.stringify(parsedSessionData)
+      JSON.stringify(parsedSessionData),
     );
 
     return decode;
@@ -111,7 +111,7 @@ export const generateAccessToken = (id, sessionId, res) => {
   });
 };
 
-export const revokeRefershToken = async (userId) => {
+export const revokeRefreshToken = async (userId) => {
   const activeSessionId = await redisClient.get(`active_session:${userId}`);
   await redisClient.del(`refresh_token:${userId}`);
   await redisClient.del(`active_session:${userId}`);

@@ -31,7 +31,7 @@ export const registerUser = tryCatch(async (req, res) => {
 
     if (zodError?.issues && Array.isArray(zodError.issues)) {
       allErrors = zodError.issues.map((issue) => ({
-        field: issue.path ? issue.path.join(".") : "unkown",
+        field: issue.path ? issue.path.join(".") : "unknown",
         message: issue.message || "validation failed",
         code: issue.code,
       }));
@@ -82,7 +82,7 @@ export const registerUser = tryCatch(async (req, res) => {
 
   res.json({
     message:
-      "If your email is valid, a verfication link has been sent. It will expire in 5 minutes",
+      "If your email is valid, a verification link has been sent. It will expire in 5 minutes",
   });
 });
 
@@ -139,7 +139,7 @@ export const loginUser = tryCatch(async (req, res) => {
 
     if (zodError?.issues && Array.isArray(zodError.issues)) {
       allErrors = zodError.issues.map((issue) => ({
-        field: issue.path ? issue.path.join(".") : "unkown",
+        field: issue.path ? issue.path.join(".") : "unknown",
         message: issue.message || "validation failed",
         code: issue.code,
       }));
@@ -242,7 +242,7 @@ export const refreshToken = tryCatch(async (req, res) => {
     return res.status(401).json({ message: "Invalid refresh token" });
   }
 
-  await generateAccessToken(decode.id, res);
+  await generateAccessToken(decode.id, decode.sessionId, res);
 
   res.status(200).json({
     message: "Token refreshed successfully",
