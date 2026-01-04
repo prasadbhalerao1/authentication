@@ -1,7 +1,7 @@
 import tryCatch from "../middleware/tryCatch.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema, loginSchema } from "../config/zod.js";
-import redisClient from "../index.js";
+import { redisClient } from "../index.js";
 import { User } from "../models/users.models.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";

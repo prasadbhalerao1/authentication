@@ -18,11 +18,9 @@ if (!redisURL) {
   process.exit(1);
 }
 
-const redisClient = createClient({
+export const redisClient = createClient({
   url: redisURL,
 });
-
-export default redisClient;
 
 redisClient
   .connect()
