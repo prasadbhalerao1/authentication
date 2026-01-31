@@ -23,26 +23,19 @@ const seedUsers = async () => {
     await User.deleteMany({});
     console.log("Cleared existing users");
 
-    const password = await bcrypt.hash("password123", 10);
+    const password = await bcrypt.hash("123456", 10);
 
     const specificUsers = [
       {
-        name: "Prasad Bhalerao",
-        email: "prasadbhalerao@gmail.com",
-        password: password,
-        role: "user",
-        isVerified: true,
-      },
-      {
-        name: "Prasad Bhalerao 08",
-        email: "prasadbhalerao08@gmail.com",
+        name: "ADMIN-MAIN",
+        email: "admin@main.com",
         password: password,
         role: "admin",
         isVerified: true,
       },
       {
-        name: "Inerd 635",
-        email: "inerd635@gmail.com",
+        name: "USER",
+        email: "user@main.com",
         password: password,
         role: "user",
         isVerified: true,
@@ -64,8 +57,8 @@ const seedUsers = async () => {
 
     await User.insertMany(allUsers);
     console.log(`Successfully seeded ${allUsers.length} users!`);
-    console.log("Admin Creds: prasadbhalerao08@gmail.com / password123");
-    console.log("User Creds: prasadbhalerao@gmail.com / password123");
+    console.log("Admin Creds: admin@main.com / 123456");
+    console.log("User Creds: user@main.com / 123456");
 
     mongoose.disconnect();
     process.exit(0);

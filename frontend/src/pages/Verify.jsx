@@ -17,18 +17,25 @@ const Verify = () => {
   const params = useParams();
   const [loading, setLoading] = useState(true);
 
+  const runOnce = React.useRef(false);
+
   async function verifyUser() {
     try {
       const { data } = await api.post(`/api/v1/verify/${params.token}`);
       setSuccessMessage(data.message);
+      setErrorMessage(""); // clear possible error
     } catch (error) {
+      // Only set error if success hasn't happened yet (handling potential race conditions)
       setErrorMessage(error.response?.data?.message || "Verification failed");
+      setSuccessMessage(""); // clear possible success
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
+    if (runOnce.current) return;
+    runOnce.current = true;
     verifyUser();
   }, []);
 

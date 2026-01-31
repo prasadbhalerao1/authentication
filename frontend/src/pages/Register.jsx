@@ -35,7 +35,14 @@ const Register = () => {
       setEmail("");
       setPassword("");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      const errorData = error.response?.data;
+      if (errorData?.error && Array.isArray(errorData.error)) {
+        // Handle Zod validation errors
+        errorData.error.forEach((err) => toast.error(err.message));
+      } else {
+        // Handle generic errors
+        toast.error(errorData?.message || "Something went wrong");
+      }
     } finally {
       setBtnLoading(false);
     }
