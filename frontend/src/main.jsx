@@ -5,8 +5,6 @@ import App from "./App.jsx";
 import { AppProvider } from "./context/AppContext.jsx";
 import { ThemeProvider } from "./components/theme-provider.jsx";
 
-export const server = "http://localhost:5000";
-
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AppProvider>
@@ -14,5 +12,5 @@ createRoot(document.getElementById("root")).render(
         <App />
       </ThemeProvider>
     </AppProvider>
-  </StrictMode>
+  </StrictMode>,
 );

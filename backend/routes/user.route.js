@@ -11,7 +11,7 @@ import {
   verifyUser,
   getAllUsers,
   deleteUser,
-} from "../controllers/user.controllers.js";
+} from "../controllers/user.controller.js";
 import { authorizedAdmin, isAuth } from "../middleware/isAuth.js";
 import { verifyCSRFToken } from "../config/csrfMiddleware.js";
 

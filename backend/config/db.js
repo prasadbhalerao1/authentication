@@ -6,7 +6,7 @@ const connectDb = async () => {
       dbName: "MERNAuthentication",
     });
 
-    console.log("MongoDb connected");
+    console.log("MongoDB connected");
   } catch (error) {
     console.log("Failed to connect");
   }

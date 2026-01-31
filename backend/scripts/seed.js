@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { User } from "../models/users.models.js";
+import { User } from "../models/user.model.js";
 import { faker } from "@faker-js/faker";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
@@ -14,14 +14,44 @@ dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const seedUsers = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "MERNAuthentication",
+    });
     console.log("Connected to MongoDB");
 
-    const users = [];
-    // Generate 15 users
-    for (let i = 0; i < 15; i++) {
-      const password = await bcrypt.hash("password123", 10);
-      users.push({
+    // Clear existing users
+    await User.deleteMany({});
+    console.log("Cleared existing users");
+
+    const password = await bcrypt.hash("password123", 10);
+
+    const specificUsers = [
+      {
+        name: "Prasad Bhalerao",
+        email: "prasadbhalerao@gmail.com",
+        password: password,
+        role: "user",
+        isVerified: true,
+      },
+      {
+        name: "Prasad Bhalerao 08",
+        email: "prasadbhalerao08@gmail.com",
+        password: password,
+        role: "admin",
+        isVerified: true,
+      },
+      {
+        name: "Inerd 635",
+        email: "inerd635@gmail.com",
+        password: password,
+        role: "user",
+        isVerified: true,
+      },
+    ];
+
+    const randomUsers = [];
+    for (let i = 0; i < 10; i++) {
+      randomUsers.push({
         name: faker.person.fullName(),
         email: faker.internet.email().toLowerCase(),
         password: password,
@@ -30,8 +60,12 @@ const seedUsers = async () => {
       });
     }
 
-    await User.insertMany(users);
-    console.log("Successfully seeded 15 users!");
+    const allUsers = [...specificUsers, ...randomUsers];
+
+    await User.insertMany(allUsers);
+    console.log(`Successfully seeded ${allUsers.length} users!`);
+    console.log("Admin Creds: prasadbhalerao08@gmail.com / password123");
+    console.log("User Creds: prasadbhalerao@gmail.com / password123");
 
     mongoose.disconnect();
     process.exit(0);

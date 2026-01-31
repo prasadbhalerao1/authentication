@@ -1,7 +1,6 @@
-import axios from "axios";
+import api from "../apiInterceptor";
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { server } from "../main";
 import Loading from "../Loading";
 import {
   Card,
@@ -20,9 +19,7 @@ const Verify = () => {
 
   async function verifyUser() {
     try {
-      const { data } = await axios.post(
-        `${server}/api/v1/verify/${params.token}`
-      );
+      const { data } = await api.post(`/api/v1/verify/${params.token}`);
       setSuccessMessage(data.message);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Verification failed");

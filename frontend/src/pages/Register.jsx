@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { server } from "../main";
-import axios from "axios";
+import api from "../apiInterceptor";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +25,7 @@ const Register = () => {
     e.preventDefault();
     setBtnLoading(true);
     try {
-      const { data } = await axios.post(`${server}/api/v1/register`, {
+      const { data } = await api.post(`/api/v1/register`, {
         name,
         email,
         password,

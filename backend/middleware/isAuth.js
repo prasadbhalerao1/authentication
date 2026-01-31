@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { redisClient } from "../config/redis.js";
-import { User } from "../models/users.models.js";
+import { User } from "../models/user.model.js";
 import { isSessionActive } from "../config/generateToken.js";
 
 export const isAuth = async (req, res, next) => {
@@ -17,7 +17,7 @@ export const isAuth = async (req, res, next) => {
 
     if (!decodedData) {
       return res.status(400).json({
-        message: "token expired",
+        message: "Token expired",
       });
     }
 
@@ -48,7 +48,7 @@ export const isAuth = async (req, res, next) => {
 
     if (!user) {
       return res.status(400).json({
-        message: "no user with this id",
+        message: "No user with this ID",
       });
     }
 
@@ -58,6 +58,7 @@ export const isAuth = async (req, res, next) => {
     req.sessionId = decodedData.sessionId;
     next();
   } catch (error) {
+    console.error("isAuth Error:", error);
     res.status(500).json({
       message: error.message,
     });

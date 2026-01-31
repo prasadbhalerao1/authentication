@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
-import userRoutes from "./routes/user.routes.js";
+import userRoutes from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config({
@@ -16,7 +16,7 @@ import { redisClient } from "./config/redis.js";
 redisClient
   .connect()
   .then(() => console.log("Redis client connected"))
-  .catch((err) => console.log("Error connecting to Redis client ", err));
+  .catch((err) => console.log("Error connecting to Redis client", err));
 
 const app = express();
 

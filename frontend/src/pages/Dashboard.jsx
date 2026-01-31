@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../apiIntercepter";
+import api from "../apiInterceptor";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ const Dashboard = () => {
       setUsers(usersData.users);
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Failed to fetch admin data"
+        error.response?.data?.message || "Failed to fetch admin data",
       );
       navigate("/");
     } finally {
@@ -53,7 +53,7 @@ const Dashboard = () => {
   const handleDeleteUser = async (userId) => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this user? This action cannot be undone."
+        "Are you sure you want to delete this user? This action cannot be undone.",
       )
     ) {
       return;

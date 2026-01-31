@@ -3,11 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
 
-const redisURL = process.env.REDIS_URL;
-
-if (!redisURL) {
-  console.error("REDIS_URL is not defined in environment variables");
-}
+const redisURL = process.env.REDIS_URL || "redis://localhost:6379";
 
 export const redisClient = createClient({
   url: redisURL,

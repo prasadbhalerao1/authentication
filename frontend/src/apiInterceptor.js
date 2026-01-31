@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server = "http://localhost:5000";
+const server = import.meta.env.VITE_SERVER_URL;
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
@@ -30,7 +30,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 let isRefreshing = false;
@@ -83,7 +83,7 @@ api.interceptors.response.use(
           return api(originalRequest);
         } catch (error) {
           processCSRFQueue(error);
-          console.error("Failed to refesh csrf token", error);
+          console.error("Failed to refresh csrf token", error);
           return Promise.reject(error);
         } finally {
           isRefreshingCSRFToken = false;
@@ -113,7 +113,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

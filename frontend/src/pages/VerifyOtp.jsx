@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { server } from "../main";
+import api from "../apiInterceptor";
 import { toast } from "sonner";
 import { AppData } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
@@ -31,13 +30,7 @@ const VerifyOtp = () => {
 
     const email = localStorage.getItem("email");
     try {
-      const { data } = await axios.post(
-        `${server}/api/v1/verify`,
-        { email, otp },
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await api.post(`/api/v1/verify`, { email, otp });
 
       toast.success(data.message);
       setIsAuth(true);

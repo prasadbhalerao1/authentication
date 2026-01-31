@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../apiIntercepter";
+import api from "../apiInterceptor";
 import { toast } from "react-toastify";
 
 const AppContext = createContext(null);
@@ -12,7 +12,7 @@ export const AppProvider = ({ children }) => {
   async function fetchUser() {
     setLoading(true);
     try {
-      const { data } = await api.get(`api/v1/getMe`);
+      const { data } = await api.get(`/api/v1/getMe`);
 
       setUser(data.user);
       setIsAuth(true);
@@ -54,6 +54,6 @@ export const AppProvider = ({ children }) => {
 export const AppData = () => {
   const context = useContext(AppContext);
 
-  if (!context) throw new Error("AppData must be used within an Appprovider");
+  if (!context) throw new Error("AppData must be used within an AppProvider");
   return context;
 };

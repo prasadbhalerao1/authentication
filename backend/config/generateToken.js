@@ -65,6 +65,7 @@ export const generateToken = async (id, res) => {
 
   console.log("generateToken: Calling generateCSRFToken");
   const csrfToken = await generateCSRFToken(id, res);
+
   console.log("generateToken: Finished");
 
   return { accessToken, refreshToken, csrfToken, sessionId };
