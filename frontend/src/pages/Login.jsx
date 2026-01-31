@@ -81,10 +81,7 @@ const Login = () => {
                 required
               />
             </div>
-            <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
-              disabled={btnLoading}
-            >
+            <Button className="w-full" disabled={btnLoading}>
               {btnLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
@@ -95,7 +92,7 @@ const Login = () => {
             </span>
             <Link
               to="/register"
-              className="font-medium text-indigo-600 hover:text-indigo-500 underline"
+              className="font-medium text-primary hover:underline hover:brightness-110"
             >
               Sign up
             </Link>

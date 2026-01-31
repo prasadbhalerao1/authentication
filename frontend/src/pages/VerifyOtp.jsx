@@ -81,7 +81,7 @@ const VerifyOtp = () => {
             </div>
 
             <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full"
               disabled={btnLoading || otp.length !== 6}
             >
               {btnLoading ? "Verifying..." : "Verify OTP"}
@@ -89,7 +89,7 @@ const VerifyOtp = () => {
 
             <Link
               to="/login"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-500 underline"
+              className="text-sm font-medium text-primary hover:underline hover:brightness-110"
             >
               Back to Login
             </Link>

@@ -9,7 +9,7 @@ export const getOtpHtml = ({ email, otp }) => {
 </head>
 <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
   <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="background-color: #000000; padding: 20px; text-align: center;">
+    <div style="background-color: #4F46E5; padding: 20px; text-align: center;">
       <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Authentication App</h1>
     </div>
     <div style="padding: 30px; text-align: center;">
@@ -45,14 +45,14 @@ export const getVerifyEmailHtml = ({ email, token }) => {
 </head>
 <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
   <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="background-color: #000000; padding: 20px; text-align: center;">
+    <div style="background-color: #4F46E5; padding: 20px; text-align: center;">
       <h1 style="color: #ffffff; margin: 0; font-size: 24px;">${appName}</h1>
     </div>
     <div style="padding: 30px; text-align: center;">
       <h2 style="color: #333333; margin-top: 0;">Verify Your Email Address</h2>
       <p style="color: #666666; font-size: 16px; line-height: 1.5;">Welcome! Please confirm your email address to activate your account.</p>
       <div style="margin: 30px 0;">
-        <a href="${verifyUrl}" style="background-color: #000000; color: #ffffff; text-decoration: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; font-weight: bold; display: inline-block;">Verify Email</a>
+        <a href="${verifyUrl}" style="background-color: #4F46E5; color: #ffffff; text-decoration: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; font-weight: bold; display: inline-block;">Verify Email</a>
       </div>
       <p style="color: #666666; font-size: 14px; margin-bottom: 5px;">Or copy this link:</p>
       <a href="${verifyUrl}" style="color: #0066cc; font-size: 14px; word-break: break-all;">${verifyUrl}</a>

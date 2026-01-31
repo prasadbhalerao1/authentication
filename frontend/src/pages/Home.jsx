@@ -91,12 +91,8 @@ const Home = () => {
           )}
 
           <Button
-            variant={user?.role === "admin" ? "outline" : "default"}
-            className={`w-full h-10 text-base ${
-              user?.role !== "admin"
-                ? "bg-red-600 hover:bg-red-700 text-white"
-                : "border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
-            }`}
+            variant="destructive"
+            className="w-full h-10 text-base"
             onClick={() => logoutUser(navigate)}
           >
             Log Out
