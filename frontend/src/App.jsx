@@ -9,6 +9,7 @@ import Loading from "./Loading";
 import Register from "./pages/Register";
 import Verify from "./pages/Verify";
 import Dashboard from "./pages/Dashboard";
+import { ModeToggle } from "./components/mode-toggle";
 
 const App = () => {
   const { isAuth, loading } = AppData();
@@ -18,6 +19,9 @@ const App = () => {
         <Loading />
       ) : (
         <BrowserRouter>
+          <div className="fixed top-4 right-4 z-50">
+            <ModeToggle />
+          </div>
           <Routes>
             <Route path="/" element={isAuth ? <Home /> : <Login />} />
             <Route path="/login" element={isAuth ? <Home /> : <Login />} />
